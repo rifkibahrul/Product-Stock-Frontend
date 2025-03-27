@@ -1,2 +1,2 @@
 # product-stock
-My platform for learning about ExpressJs and ReactJs
+My platform for learning about ReactJs and Redux
