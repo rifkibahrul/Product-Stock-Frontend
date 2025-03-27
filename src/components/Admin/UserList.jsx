@@ -14,13 +14,13 @@ const UserList = () => {
                                 No
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Product Name
+                                Name
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Price
+                                Email
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Created By
+                                Role
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Action
