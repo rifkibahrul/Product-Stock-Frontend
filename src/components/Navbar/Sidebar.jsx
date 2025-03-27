@@ -1,8 +1,20 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { IoPerson, IoPricetag, IoHome, IoLogOut } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import { LogOut, reset } from "../../features/authSlice";
 
 const Sidebar = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { user } = useSelector((state) => state.auth);
+
+    const logout = () => {
+        dispatch(LogOut());
+        dispatch(reset());
+        navigate("/");
+    };
+
     return (
         <>
             <aside
@@ -34,6 +46,7 @@ const Sidebar = () => {
                         </li>
                         <li>
                             <button
+                                onClick={logout}
                                 type="button"
                                 className="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
@@ -44,19 +57,21 @@ const Sidebar = () => {
                             </button>
                         </li>
                     </ul>
-                    <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
-                        <li>
-                            <NavLink
-                                to={"/users"}
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                            >
-                                <IoPerson />
-                                <span className="flex-1 ms-3 whitespace-nowrap">
-                                    Users
-                                </span>
-                            </NavLink>
-                        </li>
-                    </ul>
+                    {user && user.role === "admin" && (
+                        <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
+                            <li>
+                                <NavLink
+                                    to={"/users"}
+                                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                >
+                                    <IoPerson />
+                                    <span className="flex-1 ms-3 whitespace-nowrap">
+                                        Users
+                                    </span>
+                                </NavLink>
+                            </li>
+                        </ul>
+                    )}
                 </div>
             </aside>
         </>

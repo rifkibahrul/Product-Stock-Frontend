@@ -1,7 +1,42 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { LogOut, reset } from "../../features/authSlice";
 
 const Navbar = () => {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { user } = useSelector((state) => state.auth);
+
+    const logout = () => {
+        dispatch(LogOut());
+        dispatch(reset());
+        navigate("/");
+    };
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    // Menutup dropdown jika klik di luar
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
         <div>
             <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -44,84 +79,61 @@ const Navbar = () => {
                                 </span>
                             </a>
                         </div>
-                        <div className="flex items-center">
-                            <div className="flex items-center ms-3">
-                                <div>
-                                    <button
-                                        type="button"
-                                        className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                                        aria-expanded="false"
-                                        data-dropdown-toggle="dropdown-user"
-                                    >
-                                        <span className="sr-only">
-                                            Open user menu
-                                        </span>
-                                    </button>
-                                </div>
-                                <button
-                                    type="button"
-                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                >
-                                    Login
-                                </button>
-                                {/* <div
-                                    className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm dark:bg-gray-700 dark:divide-gray-600"
-                                    id="dropdown-user"
-                                >
-                                    <div className="px-4 py-3" role="none">
-                                        <p
-                                            className="text-sm text-gray-900 dark:text-white"
-                                            role="none"
-                                        >
-                                            Neil Sims
+                        {/* Profil & Dropdown */}
+                        <div className="relative" ref={dropdownRef}>
+                            <button
+                                type="button"
+                                onClick={toggleDropdown}
+                                className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                            >
+                                <span className="sr-only">Open user menu</span>
+                                <img
+                                    className="w-8 h-8 rounded-full"
+                                    src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                                    alt="User"
+                                />
+                            </button>
+
+                            {/* Dropdown */}
+                            {isDropdownOpen && (
+                                <div className="absolute right-0 z-50 mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
+                                    <div className="px-4 py-3">
+                                        <p className="text-sm text-gray-900 dark:text-white">
+                                            {user && user.name}
                                         </p>
-                                        <p
-                                            className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
-                                            role="none"
-                                        >
-                                            neil.sims@flowbite.com
+                                        <p className="text-sm font-medium text-gray-500 truncate dark:text-gray-300">
+                                            {user && user.email}
                                         </p>
                                     </div>
-                                    <ul className="py-1" role="none">
+                                    <ul className="py-1">
                                         <li>
-                                            <a
-                                                href="#"
+                                            <NavLink
+                                                to={"/dashboard"}
                                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                role="menuitem"
                                             >
                                                 Dashboard
-                                            </a>
+                                            </NavLink>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <a
                                                 href="#"
                                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                role="menuitem"
                                             >
                                                 Settings
                                             </a>
-                                        </li>
+                                        </li> */}
                                         <li>
-                                            <a
-                                                href="#"
+                                            <button
+                                                onClick={logout}
+                                                type="button"
                                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                role="menuitem"
                                             >
-                                                Earnings
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a
-                                                href="#"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                role="menuitem"
-                                            >
-                                                Sign out
-                                            </a>
+                                                Logout
+                                            </button>
                                         </li>
                                     </ul>
-                                </div> */}
-                            </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
